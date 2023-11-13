@@ -7,7 +7,7 @@ This project permits the creation of RNG generators based on nuclear decay inter
 
 and theoretically it permits the conversion of any Geiger with audio feedback to that purpose so, differently from its predecessor, this appliance doesn't use esotic hardware. A Raspberry Pico W is employed as microcontroller platform.
 
-![alt text](./screenshoots/appliance.jpg "Appliance")
+![alt text](./screenshots/appliance.jpg "Appliance")
 
 Hardware:
 =========
@@ -15,7 +15,7 @@ Hardware:
 * A Raspberry Pico (RP2040) is employed as microcontroller platform;
 * An OpAmp based circuit raises the audio signal level of the Geiger "pulses" captured using the audio jack:
 
-![alt text](./screenshoots/ampl.jpg "Amplifier")
+![alt text](./screenshots/ampl.jpg "Amplifier")
 
 Algorithm and Features:
 =======================
