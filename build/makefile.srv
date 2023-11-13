@@ -1,0 +1,6 @@
+all:
+	cmake -DPICO_SDK_PATH=/home/bg/_Compiledir/_Raspberry_Pico/pico-sdk -DPICO_BOARD=pico_w  ..
+	make
+
+clean:
+	make clean
