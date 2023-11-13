@@ -1,11 +1,11 @@
 Introduction:
 =============
 
-This project permits the creation of RNG generators based on nuclear decay interfacing  a Geiger counter with audio exit. It's an evolution of my previous project you find here:
+This project permits the creation of RNG generators based on nuclear decay,  interfacing  a Geiger counter with audio exit to a MC. It's an evolution of my previous project you find here:
 
 [NuclearRNG text Here](https://github.com/gbonacini/nuclear_random_number_generator)
 
-and theoretically it permits the conversion of any Geiger with audio feedback to that purpose so, differently from its predecessor, this appliance doesn't use esotic hardware. A Raspberry Pico W is employed as microcontroller platform.
+Theoretically it permits the conversion of any Geiger with audio feedback to an RNG in fact, differently from its predecessor, this appliance doesn't use esotic hardware but standard Geiger counters. A Raspberry Pico W is employed as microcontroller platform.
 
 ![alt text](./screenshots/appliance.jpg "Appliance")
 
@@ -31,16 +31,16 @@ Protocol:
 ```shell
 ready\n
 ```
- where '\n' is "newline" character
+   where '\n' is "newline" character
 * You require a RN sending the message:
 ```shell
 req
 ```
 * Then you'll receice a RN in an answer with the following format:
 ```shell
-```
 <random_number><separator><available_numbers><newline>
-  where:
+```
+   where:
   - the first field is a random number in the range 0-15 or the number 16 if an error was generated or no number is available yet;
   - the chosen range is 0-15 is convenient because the union of two generated random numbers represent a full random byte;
   - the separator is the character ':';
