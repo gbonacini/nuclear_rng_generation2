@@ -31,7 +31,7 @@ Protocol:
 ```shell
 ready\n
 ```
-<sp><sp>where '\n' is "newline" character
+<sp><sp><sp>where '\n' is "newline" character
 * You require a RN sending the message:
 ```shell
 req
@@ -40,7 +40,7 @@ req
 ```shell
 <random_number><separator><available_numbers><newline>
 ```
-   where:
+<sp><sp><sp>where:
   - the first field is a random number in the range 0-15 or the number 16 if an error was generated or no number is available yet;
   - the chosen range is 0-15 is convenient because the union of two generated random numbers represent a full random byte;
   - the separator is the character ':';
