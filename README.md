@@ -31,7 +31,7 @@ Protocol:
 ```shell
 ready\n
 ```
-   where '\n' is "newline" character
+<sp><sp>where '\n' is "newline" character
 * You require a RN sending the message:
 ```shell
 req
