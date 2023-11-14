@@ -5,7 +5,7 @@ This project permits the creation of RNG generators based on nuclear decay,  int
 
 [NuclearRNG text Here](https://github.com/gbonacini/nuclear_random_number_generator)
 
-Theoretically it permits the conversion of any Geiger with audio feedback to an RNG in fact, differently from its predecessor, this appliance doesn't use esotic hardware but standard Geiger counters. A Raspberry Pico W is employed as microcontroller platform.
+Theoretically it permits the conversion of any Geiger with audio feedback to an RNG in fact, differently from its predecessor, this appliance doesn't use exotic hardware but standard Geiger counters. A Raspberry Pico W is employed as microcontroller platform.
 
 ![alt text](./screenshots/appliance.jpg "Appliance")
 
@@ -36,7 +36,7 @@ ready\n
 ```shell
 req
 ```
-* Then you'll receice a RN in an answer with the following format:
+* Then you'll receive a RN in an answer with the following format:
 ```shell
 <random_number><separator><available_numbers><newline>
 ```
@@ -80,6 +80,6 @@ Installation and Use:
 ```shell
 geiger_gen2.uf2 
 ```
-  putting the Pico in "deploy mode" pushing the white button before connecting USB cable and relesing the same button a second after the connection.
-- A trivial Python client example is present in "test" directory in the present software disgtribution.
+  putting the Pico in "deploy mode" pushing the white button before connecting USB cable and releasing the same button a second after the connection.
+- A trivial Python client example is present in "test" directory in the present software distribution.
 - The number can be requested from any program able to create Berkeley sockets using the described protocol.
