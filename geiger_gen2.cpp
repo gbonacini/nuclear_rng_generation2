@@ -22,12 +22,13 @@ using geigergen2::GeigerGen2,
       std::cerr;
 
 int main(void) {
-    const unsigned int  INPUT_PIN   { 31    },
-                        VTHRESHOLD  { 2500  },
-                        MAX_RETRIES { 3 },
-                        GRACE_TIME  { 10000 };
+    const unsigned int  INPUT_PIN      { 31    },
+                        VTHRESHOLD     { 2500  },
+                        ZERO_THRESHOLD { 100   },
+                        MAX_RETRIES    { 3 },
+                        GRACE_TIME     { 10000 };
 
-    GeigerGen2* gg2 { GeigerGen2::getInstance(INPUT_PIN, VTHRESHOLD) };
+    GeigerGen2* gg2 { GeigerGen2::getInstance(INPUT_PIN, VTHRESHOLD, ZERO_THRESHOLD) };
     gg2->init();
     gg2->detect();
 

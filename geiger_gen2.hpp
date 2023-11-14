@@ -50,7 +50,8 @@ namespace geigergen2 {
             static_assert( MAX_RESULT < INVALID_RESULT ); 
 
             static GeigerGen2*     getInstance(unsigned int  pin, 
-                                               unsigned int  vthr)     noexcept;
+                                               unsigned int  vthr,
+                                               unsigned int  zero)     noexcept;
             void                   init(void)                          noexcept;
             static void            abort(const char* msg)              noexcept;
             void                   detect(void)                        noexcept;
@@ -65,19 +66,22 @@ namespace geigergen2 {
                                                                    genCount             { 0L },
                                                                    lastCount            { 0L };
             static inline unsigned int                             gpioPin,
-                                                                   vthreshold;
+                                                                   vthreshold,
+                                                                   zerothreshold;
 
             static inline GeigerGen2*                              instance             { nullptr };
             static inline unsigned char                            roulette             { 0 },
                                                                    lastRnd              { INVALID_RESULT };
 
             explicit GeigerGen2(unsigned int pin, 
-                                unsigned int vhtr)                 noexcept;
+                                unsigned int vhtr,
+                                unsigned int zero)                 noexcept;
     };
 
-    GeigerGen2::GeigerGen2(unsigned int pin, unsigned int  vthr)  noexcept {
-        gpioPin    = pin;
-        vthreshold = vthr;
+    GeigerGen2::GeigerGen2(unsigned int pin, unsigned int  vthr, unsigned int zero)  noexcept {
+        gpioPin       = pin;
+        vthreshold    = vthr;
+        zerothreshold = zero;
     }
 
     void  GeigerGen2::abort(const char* msg) noexcept{
@@ -110,8 +114,8 @@ namespace geigergen2 {
         mutex_init(&rndMutex);
     }
 
-    GeigerGen2* GeigerGen2::getInstance(unsigned int pin, unsigned int vthr){
-        if(instance == nullptr) instance = new GeigerGen2(pin, vthr);
+    GeigerGen2* GeigerGen2::getInstance(unsigned int pin, unsigned int vthr, unsigned int zero){
+        if(instance == nullptr) instance = new GeigerGen2(pin, vthr, zero);
         return instance;
     }
 
@@ -123,7 +127,11 @@ namespace geigergen2 {
                   mutex_enter_blocking(&GeigerGen2::rndMutex);
                   GeigerGen2::rndQueue.push_back(GeigerGen2::roulette);
                   mutex_exit(&GeigerGen2::rndMutex);
-                  sleep_us(250);
+                  for(;;){ result = adc_read();
+                           if(result > zerothreshold ) sleep_us(100);
+                           else  break;
+                  }
+                  sleep_us(100);
                   GeigerGen2::roulette = GeigerGen2::MIN_RESULT;
                   GeigerGen2::count++;
                }
