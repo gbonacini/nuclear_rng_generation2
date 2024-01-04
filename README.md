@@ -74,8 +74,10 @@ Installation and Use:
 =====================
 
 - compile the program as follow:
+```shell
   cd build
   make -f makefile.srv all
+```
 - deploy the generated binary file named:
 ```shell
 geiger_gen2.uf2 
