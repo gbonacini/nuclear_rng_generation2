@@ -73,7 +73,7 @@ Configuration:
 Installation and Use:
 =====================
 
-- compile the program as follow:
+- compile the program as follow (set -DPICO_SDK_PATH using real pico-sdk path):
 ```shell
   cd build
   make -f makefile.srv all
