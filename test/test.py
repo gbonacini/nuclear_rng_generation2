@@ -20,13 +20,17 @@ def client_program():
         print('RNG: ' + data)  
         i=i+1
 
+    data = client_socket.recv(1024).decode()  
+
+    print('RNG: ' + data)  
+
     # Disconnect client
     message = "end"
 
     client_socket.send(message.encode())  
     data = client_socket.recv(1024).decode()  
 
-    print('End RNG: ' + data)  
+    print('End')  
 
     client_socket.close()  
 
