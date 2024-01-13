@@ -29,8 +29,10 @@
 #include <iostream>
 #include <array>
 #include <deque>
+#include <utility>
 #include <string>
 #include <algorithm>
+#include <limits>
 
 namespace geigergen2 {
 
@@ -39,14 +41,22 @@ namespace geigergen2 {
           std::string,
           std::to_string,
           std::copy_n,
-          std::deque;
+          std::deque,
+          std::numeric_limits;
+
+    using  rng=unsigned char;
+    using  registry=unsigned int;
+    static_assert(  numeric_limits<rng>::max() <  numeric_limits<registry>::max() ); 
+    using  Rng=std::pair<rng, registry>;
 
     class GeigerGen2 {
         public:
             static inline const unsigned int                       MIN_RESULT           { 0 },
                                                                    MAX_RESULT           { 15 },
                                                                    INVALID_RESULT       { MAX_RESULT + 1 };
+
             static_assert( MIN_RESULT <  MAX_RESULT ); 
+            static_assert( INVALID_RESULT <  numeric_limits<registry>::max() ); 
             static_assert( MAX_RESULT < INVALID_RESULT ); 
 
             static GeigerGen2*     getInstance(unsigned int  pin, 
@@ -55,12 +65,12 @@ namespace geigergen2 {
             void                   init(void)                          noexcept;
             static void            abort(const char* msg)              noexcept;
             void                   detect(void)                        noexcept;
-            static unsigned char   getRnd(void)                        noexcept;
+            static Rng             getRnd(void)                        noexcept;
             static size_t          getAvailable(void)                  noexcept;
 
         private:
             static inline mutex_t                                  rndMutex;
-            static inline deque<unsigned char>                     rndQueue; 
+            static inline deque<Rng>                               rndQueue; 
             static inline const size_t                             MAX_QUEUE_LEN        { 10240 };
             static inline long                                     count                { 0L },
                                                                    genCount             { 0L },
@@ -70,7 +80,7 @@ namespace geigergen2 {
                                                                    zerothreshold;
 
             static inline GeigerGen2*                              instance             { nullptr };
-            static inline unsigned char                            roulette             { 0 },
+            static inline unsigned int                             roulette             { 0 },
                                                                    lastRnd              { INVALID_RESULT };
 
             explicit GeigerGen2(unsigned int pin, 
@@ -89,8 +99,8 @@ namespace geigergen2 {
         for(;;) sleep_ms(1000);
     }
 
-    unsigned char GeigerGen2::getRnd(void) noexcept{
-        unsigned char ret { INVALID_RESULT };
+    Rng GeigerGen2::getRnd(void) noexcept{
+        Rng ret { INVALID_RESULT, 0 };
         if( ! GeigerGen2::rndQueue.empty()){
              mutex_enter_blocking(&GeigerGen2::rndMutex);
              ret = GeigerGen2::rndQueue.front();
@@ -123,20 +133,21 @@ namespace geigergen2 {
         auto detectionThread = [](){ 
            for(;;){
                uint16_t result { adc_read() };
-               if(result > vthreshold && GeigerGen2::rndQueue.size() <= GeigerGen2::MAX_QUEUE_LEN){ 
+               if(result > vthreshold){ 
+
                   mutex_enter_blocking(&GeigerGen2::rndMutex);
-                  GeigerGen2::rndQueue.push_back(GeigerGen2::roulette);
+                  if(GeigerGen2::rndQueue.size() > GeigerGen2::MAX_QUEUE_LEN) GeigerGen2::rndQueue.pop_front();
+                  GeigerGen2::rndQueue.push_back({GeigerGen2::roulette % (MAX_RESULT + 1), GeigerGen2::roulette});
                   mutex_exit(&GeigerGen2::rndMutex);
+
                   for(;;){ result = adc_read();
-                           if(result > zerothreshold ) sleep_us(100);
+                        if(result > zerothreshold ) sleep_us(10);
                            else  break;
                   }
                   sleep_us(100);
-                  GeigerGen2::roulette = GeigerGen2::MIN_RESULT;
                   GeigerGen2::count++;
                }
                GeigerGen2::roulette++;
-               if(GeigerGen2::roulette > GeigerGen2::MAX_RESULT) GeigerGen2::roulette = GeigerGen2::MIN_RESULT;
            }
         };
 
@@ -288,30 +299,32 @@ err_t GeigerGen2NetworkLayer::serverRecvClbk(void *ctx, TcpPcb *tpcb, Pbuf* pb, 
                                        };
         int par { ckeckReq() };
         cerr << "ServerRecvClbk: detect type : " << par  <<'\n';
+        err_t err { ERR_OK };
         switch(par){
             case 0:
                 {
                     cerr << "ServerRecvClbk: send for req\n";
-                    unsigned char      rndn     { GeigerGen2::getRnd() };
-                    string             msg      { to_string(rndn).append(":").append(to_string(GeigerGen2::getAvailable())).append("\n") };
+                    Rng                rndn     { GeigerGen2::getRnd() };
+                    string             msg      { to_string(rndn.first).append(":").append(to_string(rndn.second)).append(":")
+                                                                       .append(to_string(GeigerGen2::getAvailable())).append("\n") };
         
                     context->toSendLen = msg.size() <= context->bufferSend.size() ? msg.size() : context->bufferSend.size();
                     copy_n(msg.data(),  context->toSendLen, context->bufferSend.data());
-                    return serverSendData(context, context->client_pcb);
+                    err =  serverSendData(context, context->client_pcb);
                 }
             break;
             case 1:
                     cerr << "ServerRecvClbk: close for end\n";
-                    clientClose(context);
+                    err = clientClose(context);
             break;
             default:
                     cerr << "ServerRecvClbk: error\n";
-                    clientClose(context); 
+                    err = clientClose(context); 
         } 
     } 
 
     cerr << "ServerRecvClbk : end \n";
-    return ERR_OK;
+    return err;
 }
 
 void GeigerGen2NetworkLayer::serverErrClbk(void *ctx, err_t err)  noexcept{

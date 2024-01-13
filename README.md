@@ -38,17 +38,18 @@ req
 ```
 * Then you'll receive a RN in an answer with the following format:
 ```shell
-<random_number><separator><available_numbers><newline>
+<random_number><separator><generator_number><separator><available_numbers><newline>
 ```
 <sp><sp><sp>where:
   - the first field is a random number in the range 0-15 or the number 16 if an error was generated or no number is available yet;
   - the chosen range is 0-15 is convenient because the union of two generated random numbers represent a full random byte;
+  - the second field represent the original value of the register incremented in loop to extract the random number using module operator of integer division by the specific range (0-15), it's provided as safeguard to verify that the loop cover every possible value for a given event frequency;
   - the separator is the character ':';
   - then a field with an integer telling you how many RNs are available in the appliance buffer, ready to be requested;
   - a newline ( '\n' ) ends the message.
 * Example:
 ```shell
-1:1393\n
+52:3473460:1384\n
 ```
 
 * You can terminate the connection with the command:
