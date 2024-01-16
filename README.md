@@ -124,3 +124,11 @@ Arithmetic mean value of data bytes is 127.6767 (127.5 = random).
 Monte Carlo value for Pi is 3.135794173 (error 0.18 percent).
 Serial correlation coefficient is 0.002606 (totally uncorrelated = 0.0).
 ```
+
+Important Note:
+===============
+
+- Not all Geiger counters could be suitable for this application: some cheap devices could produce a programmed audio feedback, a software routine written so the device sound "good". So, if you looking for a device to make your RNG, do not purchase blindlyr: do your research;
+
+- Be sure alarm and other audio feedbacks other than the pulses are disabled or they will be translate in a sequence of non-random numbers.
+
