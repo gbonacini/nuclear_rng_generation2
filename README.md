@@ -3,7 +3,7 @@ Introduction:
 
 This project permits the creation of RNG generators based on nuclear decay,  interfacing  a Geiger counter with audio exit to a MC. It's an evolution of my previous project you find here:
 
-[NuclearRNG text Here](https://github.com/gbonacini/nuclear_random_number_generator)
+[NuclearRNG](https://github.com/gbonacini/nuclear_random_number_generator)
 
 Theoretically it permits the conversion of any Geiger with audio feedback to an RNG in fact, differently from its predecessor, this appliance doesn't use exotic hardware but standard Geiger counters. A Raspberry Pico W is employed as microcontroller platform.
 
@@ -86,3 +86,38 @@ geiger_gen2.uf2
   putting the Pico in "deploy mode" pushing the white button before connecting USB cable and releasing the same button a second after the connection.
 - A trivial Python client example is present in "test" directory in the present software distribution.
 - The number can be requested from any program able to create Berkeley sockets using the described protocol.
+
+Tests:
+======
+
+- 'test' directory contains test results and tools to perform the  tests themselves;
+- Python3 and some dependencies are required;
+- Ent suit is required:
+```shell
+apt-get install ent
+```
+- A makefile is present, to perform the test use the following:
+```shell
+make -f makefile clean all
+```
+- A file with 250'000 and RNs and another file with 10'000 RNs extracted from the bigger one are provided.
+
+Results:
+========
+
+- Preliminary tests gave good results:
+![alt text](./test/dispersion1.png "Dispersion")
+- Ent suite:
+```shell
+Entropy = 7.998604 bits per byte.
+
+Optimum compression would reduce the size
+of this 125000 byte file by 0 percent.
+
+Chi square distribution for 125000 samples is 241.57, and randomly
+would exceed this value 71.76 percent of the times.
+
+Arithmetic mean value of data bytes is 127.6767 (127.5 = random).
+Monte Carlo value for Pi is 3.135794173 (error 0.18 percent).
+Serial correlation coefficient is 0.002606 (totally uncorrelated = 0.0).
+```
