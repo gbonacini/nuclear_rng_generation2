@@ -140,11 +140,7 @@ namespace geigergen2 {
                   GeigerGen2::rndQueue.push_back({GeigerGen2::roulette % (MAX_RESULT + 1), GeigerGen2::roulette});
                   mutex_exit(&GeigerGen2::rndMutex);
 
-                  for(;;){ result = adc_read();
-                        if(result > zerothreshold ) sleep_us(10);
-                           else  break;
-                  }
-                  sleep_us(100);
+                  for(;result > zerothreshold ; result = adc_read()){ }
                   GeigerGen2::count++;
                }
                GeigerGen2::roulette++;
