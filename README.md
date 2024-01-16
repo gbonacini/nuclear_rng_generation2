@@ -107,6 +107,8 @@ Results:
 
 - Preliminary tests gave good results:
 ![alt text](./test/dispersion1.png "Dispersion")
+<BR>
+![alt text](./test/dispersion2.png "Dispersion 2")
 - Ent suite:
 ```shell
 Entropy = 7.998604 bits per byte.
